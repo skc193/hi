@@ -1,0 +1,9 @@
+在離線電腦上安裝所有模組:
+pip install --no-index --find-links C:\offline_packages pandas matplotlib pyinstaller
+
+驗證安裝:
+pyinstaller --version
+python -c "import pandas; import matplotlib; print('All modules installed successfully!')"
+
+用pyinstaller將pythin程式打包成執行檔:
+pyinstaller -c --onefile --icon=icon.png --upx-dir="C:/upx" --hidden-import=tabulate --hidden-import=openpyxl --name=LinePay_MonthyReport_20260303.exe LinePay_MonthyReport_20260303.py
