@@ -1,0 +1,86 @@
+# Power Automate for Desktop — 上月第一天與最後一天（不補零格式）
+
+## 格式說明
+> `2026/4/1`、`2026/4/30` — 月份與日期**不補零**
+
+---
+
+## 完整流程步驟
+
+### Step 1 — 取得目前日期
+```
+動作：取得目前日期和時間
+輸出變數：%CurrentDateTime%
+```
+
+---
+
+### Step 2 — 組出「本月第一天」字串並轉為日期物件
+```
+動作：設定變數
+  變數名稱：%ThisMonth1stStr%
+  值：%CurrentDateTime.Year%/%CurrentDateTime.Month%/1 00:00:00
+```
+```
+動作：將文字轉換為日期時間
+  來源文字：%ThisMonth1stStr%
+  輸出變數：%ThisMonth1stDT%
+```
+
+---
+
+### Step 3 — 本月第一天 **−1天** → 上月最後一天
+```
+動作：將日期時間加上
+  日期時間：%ThisMonth1stDT%
+  加上：-1
+  時間單位：天
+  輸出變數：%PrevMonthLastDT%
+```
+
+---
+
+### Step 4 — 格式化輸出（不補零）
+
+#### 上月最後一天
+```
+動作：設定變數
+  變數名稱：%PrevMonthLastStr%
+  值：%PrevMonthLastDT.Year%/%PrevMonthLastDT.Month%/%PrevMonthLastDT.Day%
+
+✅ 結果範例：2026/4/30
+```
+
+#### 上月第一天
+```
+動作：設定變數
+  變數名稱：%PrevMonthFirstStr%
+  值：%PrevMonthLastDT.Year%/%PrevMonthLastDT.Month%/1
+
+✅ 結果範例：2026/4/1
+```
+
+---
+
+## 流程總覽
+
+| # | 動作 | 輸出變數 | 說明 |
+|---|------|----------|------|
+| 1 | 取得目前日期和時間 | `%CurrentDateTime%` | 今天 |
+| 2 | 設定變數 | `%ThisMonth1stStr%` | 組出本月1日字串 |
+| 3 | 文字轉日期時間 | `%ThisMonth1stDT%` | 轉成日期物件 |
+| 4 | 日期時間加上 −1天 | `%PrevMonthLastDT%` | 上月最後一天 |
+| 5 | 設定變數 | `%PrevMonthLastStr%` | 上月最後一天字串 |
+| 6 | 設定變數 | `%PrevMonthFirstStr%` | 上月第一天字串 |
+
+---
+
+## 跨年邊界驗證
+
+| 執行當下 | `%PrevMonthFirstStr%` | `%PrevMonthLastStr%` |
+|----------|-----------------------|----------------------|
+| 2026/5/6 | 2026/4/1 | 2026/4/30 |
+| 2026/3/1 | 2026/2/1 | 2026/2/28 |
+| 2026/1/15 | 2025/12/1 | 2025/12/31 |
+
+> 跨年（1月求上月）、閏年（2月末日）皆由 PAD 日期物件自動處理，**不需要額外判斷**。
